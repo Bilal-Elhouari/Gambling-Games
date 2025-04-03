@@ -18,7 +18,8 @@ function shuffleArray<T>(array: T[]): T[] {
 
 function generatePlayerCards(): number[] {
   const allCards = [...CARD_VALUES];
-  allCards.push(5); // Add an extra 5 to make it 5 cards total
+  // Add an extra 5 to make it 5 cards total
+  allCards.push(5);
   return shuffleArray(allCards);
 }
 
@@ -63,12 +64,12 @@ function App() {
       const newState = { ...prev };
       const player = newState.players[playerId];
       const cardValue = player.cards[cardIndex];
-
+      
       // Calculate card position for animation
       const playerElement = document.querySelector(`[data-player-id="${playerId}"]`);
       const cardElement = playerElement?.querySelector(`[data-card-index="${cardIndex}"]`);
       const rect = cardElement?.getBoundingClientRect() || { x: 0, y: 0 };
-
+      
       // Add played card with position
       const playedCard: PlayedCard = {
         value: cardValue,
@@ -76,18 +77,18 @@ function App() {
         x: rect.x,
         y: rect.y,
       };
-
+      
       // Remove the played card
       player.cards = player.cards.filter((_, i) => i !== cardIndex);
-
+      
       // Update total score
       const newTotalScore = prev.totalScore + cardValue;
-
+      
       // Check if player is eliminated
       if (newTotalScore > 21) {
         player.isEliminated = true;
       }
-
+      
       // Find next active player
       let nextPlayer = (playerId + 1) % newState.players.length;
       while (
@@ -101,11 +102,11 @@ function App() {
       newState.players.forEach(p => {
         p.isRevealed = p.id === nextPlayer;
       });
-
+      
       // Check if game is over
       const activePlayers = newState.players.filter((p) => !p.isEliminated);
       const gameOver = activePlayers.length <= 1;
-
+      
       return {
         ...newState,
         totalScore: newTotalScore,
@@ -120,14 +121,14 @@ function App() {
   const onSelectGame = useCallback(() => {
     setGameState(prev => ({
       ...prev,
-      isSelectingPlayers: true,
+      isSelectingPlayers: true
     }));
   }, []);
 
   const onBack = useCallback(() => {
     setGameState(prev => ({
       ...prev,
-      isSelectingPlayers: false,
+      isSelectingPlayers: false
     }));
   }, []);
 
@@ -177,7 +178,7 @@ function App() {
                   onClick={() => setGameState(prev => ({
                     ...prev,
                     gameStarted: false,
-                    isSelectingPlayers: false,
+                    isSelectingPlayers: false
                   }))}
                 >
                   Back to Menu

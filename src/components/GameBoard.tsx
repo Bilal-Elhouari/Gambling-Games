@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from './Card';
 import { Player, PlayedCard } from '../types';
+import { Crown } from 'lucide-react';
 
 interface GameBoardProps {
   players: Player[];
@@ -20,13 +21,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 }) => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-4">
-      {/* Affichage du score total */}
-      <div className="mb-8 text-4xl font-bold text-white flex items-center gap-3">
-        <span>👑</span>
+      <motion.div
+        className="mb-8 text-4xl font-bold text-white flex items-center gap-3"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+      >
+        <Crown className="w-8 h-8" />
         <span>Total Score: {totalScore}</span>
-      </div>
+      </motion.div>
 
-      {/* Cartes jouées au centre */}
       <div className="relative">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <AnimatePresence>
@@ -52,50 +55,50 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
       </div>
 
-      {/* Informations des joueurs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-8">
         {players.map((player, playerIndex) => (
-          <div
+          <motion.div
             key={player.id}
-            data-player-id={player.id}
             className={`p-6 rounded-xl backdrop-blur-lg ${
               currentPlayer === playerIndex
                 ? 'bg-white/30 ring-2 ring-white/50'
                 : 'bg-white/10'
             } ${player.isEliminated ? 'opacity-50' : ''}`}
+            animate={{
+              scale: currentPlayer === playerIndex ? 1.05 : 1,
+            }}
           >
-            {/* Nom du joueur et état actif */}
             <h3 className="text-xl font-semibold mb-4 text-white flex items-center gap-2">
               Player {player.id + 1}
               {currentPlayer === playerIndex && (
-                <span className="inline-block w-3 h-3 bg-green-400 rounded-full" />
+                <motion.span
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  className="inline-block w-3 h-3 bg-green-400 rounded-full"
+                />
               )}
               {player.isEliminated && ' (Eliminated)'}
             </h3>
-
-            {/* Cartes du joueur */}
-            <AnimatePresence>
-              {player.cards.length > 0 ? (
-                <div className="flex flex-wrap gap-4 justify-center">
-                  {player.cards.map((card, cardIndex) => (
-                    <Card
-                      key={`${player.id}-${cardIndex}`}
-                      value={card}
-                      isPlayable={currentPlayer === playerIndex && !player.isEliminated}
-                      isHidden={!player.isRevealed}
-                      onClick={() => onPlayCard(playerIndex, cardIndex)}
-                      layoutId={`card-${player.id}-${card}-${cardIndex}`}
-                      data-card-index={cardIndex}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-white">No cards left</p>
-              )}
-            </AnimatePresence>
-          </div>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <AnimatePresence>
+                {player.cards.map((card, cardIndex) => (
+                  <Card
+                    key={`${player.id}-${cardIndex}`}
+                    value={card}
+                    isPlayable={
+                      currentPlayer === playerIndex &&
+                      !player.isEliminated
+                    }
+                    isHidden={!player.isRevealed}
+                    onClick={() => onPlayCard(playerIndex, cardIndex)}
+                    layoutId={`card-${player.id}-${card}-${cardIndex}`}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+          </motion.div>
         ))}
       </div>
     </div>
   );
-};
+}
